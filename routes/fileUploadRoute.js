@@ -45,13 +45,14 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             size: req.file.size,
             expiry: expiryDate
         });
-        const downloadLink = `http://${req.get("host")}/${shortId}`;
+        const downloadLink = `https://${req.get("host")}/${shortId}`;
 
         await sendMail({
             emailTo,
             emailFrom: emailFrom || process.env.MAIL_USERNAME,
             link: downloadLink,
-            fileName: req.file.originalname
+            fileName: req.file.originalname,
+            size: req.file.size
         });
         // console.log("Body:", req.body);
         // console.log("File:", req.file);
