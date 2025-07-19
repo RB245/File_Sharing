@@ -30,12 +30,12 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
         const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
         fs.unlinkSync(req.file.path);
 
-        const shortId = await shortenUrl(result.url);
+        const shortId = await shortenUrl(downloadableUrl);
         const expiryDate = getExpiryDate(expiry);
 
         const createdFile = await File.create({
             shortId,
-            cloudinaryUrl:result.url,
+            cloudinaryUrl:downloadableUrl,
             fileName: req.file.originalname,
             size: req.file.size,
             expiry: expiryDate

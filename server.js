@@ -35,28 +35,65 @@ app.listen(port, () =>{
     console.log(`Server is running on port ${port}`);
 });
 
+// app.get('/:shortId', async (req, res) => {
+//     try {
+//         const file = await File.findOne({ shortId: req.params.shortId });
+//         if (!file || file.isExpired) {
+//             return res.status(404).send("This file has expired or does not exist.");
+//         }
+//         // res.redirect(file.cloudinaryUrl);
+//         res.send(`
+//             <html>
+//                 <head>
+//                 <title>Download File</title>
+//                 <meta http-equiv="refresh" content="2;url=${file.cloudinaryUrl}" />
+//                 </head>
+//                 <body style="font-family: sans-serif; text-align: center; padding: 2rem;">
+//                 <h2>Your download is starting...</h2>
+//                 <p>If it doesn't, <a href="${file.cloudinaryUrl}" download>click here</a> to download manually.</p>
+//                 </body>
+//             </html>
+//             `);
+
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send("Something went wrong.");
+//     }
+// });
+
+
 app.get('/:shortId', async (req, res) => {
     try {
-        const file = await File.findOne({ shortId: req.params.shortId });
-        if (!file || file.isExpired) {
-            return res.status(404).send("This file has expired or does not exist.");
+        const { shortId } = req.params;
+        console.log(" Short ID requested:", shortId);
+
+        const file = await File.findOne({ shortId });
+        if (!file) {
+            console.log(" No file found for this shortId");
+            return res.status(404).send("This file does not exist.");
         }
-        // res.redirect(file.cloudinaryUrl);
+
+        if (file.isExpired) {
+            console.log(" File is expired");
+            return res.status(404).send("This file has expired.");
+        }
+
+        console.log(" File found:", file);
+
         res.send(`
             <html>
                 <head>
-                <title>Download File</title>
-                <meta http-equiv="refresh" content="2;url=${file.cloudinaryUrl}" />
+                    <title>Download File</title>
+                    <meta http-equiv="refresh" content="2;url=${file.cloudinaryUrl}" />
                 </head>
                 <body style="font-family: sans-serif; text-align: center; padding: 2rem;">
-                <h2>Your download is starting...</h2>
-                <p>If it doesn't, <a href="${file.cloudinaryUrl}" download>click here</a> to download manually.</p>
+                    <h2>Your download is starting...</h2>
+                    <p>If it doesn't, <a href="${file.cloudinaryUrl}" download>click here</a>.</p>
                 </body>
             </html>
-            `);
-
+        `);
     } catch (err) {
-        console.error(err);
+        console.error("Error in /:shortId route", err);
         res.status(500).send("Something went wrong.");
     }
 });
