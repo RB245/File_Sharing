@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Sharing App</title>
+</head>
+<body>
+  <h2>Upload your PDF</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label>Choose PDF:</label><br/>
+    <input type="file" name="file" accept="application/pdf" required /><br/><br/>
+
+    <label>Receiver Email (emailTo):</label><br/>
+    <input type="email" name="emailTo" required /><br/><br/>
+
+    <label>Sender Email (emailFrom, optional):</label><br/>
+    <input type="email" name="emailFrom" /><br/><br/>
+
+    <label>Expiry Duration:</label><br/>
+    <select name="expiry" required>
+      <option value="1">1 Day</option>
+      <option value="2">2 Days</option>
+      <option value="7">7 Days</option>
+      <option value="30">30 Days</option>
+    </select><br/><br/>
+
+    <button type="submit">Upload PDF</button>
+  </form>
+
+  <div id="response" style="margin-top: 20px;"></div>
+
+  <script>
+    document.getElementById('uploadForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const expiry = formData.get("expiry") + "D"; // Convert to "1D", "2D" etc.
+      formData.set("expiry", expiry);
+
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const link = `http://${location.host}/${data.createdFile.shortId}`;
+        document.getElementById('response').innerHTML = `
+          <p><strong>Short URL:</strong> <a href="${link}" target="_blank">${link}</a></p>
+          <p>Email sent to: ${formData.get("emailTo")}</p>
+        `;
+      } else {
+        document.getElementById('response').innerText = "Upload failed: " + (data.error || 'Unknown error');
+      }
+    };
+  </script>
+</body>
+</html>

@@ -12,12 +12,14 @@
   "description": "",
   "dependencies": {
     "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "mongoose": "^8.16.0",
     "multer": "^2.0.1",
     "nanoid": "^5.1.5",
+    "node-cron": "^4.2.0",
     "nodemailer": "^7.0.3"
   }
 }
