@@ -27,7 +27,12 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             type: 'upload',
             access_mode: 'public'
         });
-        const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
+        // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
+        const encodedName = encodeURIComponent(req.file.originalname);
+        const downloadableUrl = result.secure_url.replace(
+        '/upload/',
+        `/upload/fl_attachment:${encodedName}/`
+        );
         fs.unlinkSync(req.file.path);
 
         const shortId = await shortenUrl(downloadableUrl);

@@ -67,7 +67,8 @@ app.get('/:shortId', async (req, res) => {
         const { shortId } = req.params;
         console.log(" Short ID requested:", shortId);
 
-        const file = await File.findOne({ shortId });
+        const file = await File.findOne({ shortId: req.params.shortId });
+        console.log("File fetched from DB:", file);
         if (!file) {
             console.log(" No file found for this shortId");
             return res.status(404).send("This file does not exist.");
