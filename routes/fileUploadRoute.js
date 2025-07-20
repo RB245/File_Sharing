@@ -27,25 +27,26 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             type: 'upload',
             access_mode: 'public'
         });
-        // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
-        const encodedName = encodeURIComponent(req.file.originalname);
-        const downloadableUrl = result.secure_url.replace(
-        '/upload/',
-        `/upload/fl_attachment:${encodedName}/`
-        );
+        // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
+        // const encodedName = encodeURIComponent(req.file.originalname);
+        // const downloadableUrl = result.secure_url.replace(
+        // '/upload/',
+        // `/upload/fl_attachment:${encodedName}/`
+        // );
         fs.unlinkSync(req.file.path);
 
-        const shortId = await shortenUrl(downloadableUrl);
+        const shortId = await shortenUrl(result.url);
         const expiryDate = getExpiryDate(expiry);
 
         const createdFile = await File.create({
             shortId,
-            cloudinaryUrl:downloadableUrl,
+            cloudinaryUrl:result.url,
             fileName: req.file.originalname,
             size: req.file.size,
             expiry: expiryDate
         });
-        const downloadLink = `https://${req.get("host")}/${shortId}`;
+        // const protocol = req.protocol === 'https' ? 'https' : 'http';
+        const downloadLink = `http://${req.get("host")}/${shortId}`;
 
         await sendMail({
             emailTo,
