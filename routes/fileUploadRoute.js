@@ -30,9 +30,10 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
         // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
         const encodedName = encodeURIComponent(req.file.originalname);
         const downloadableUrl = result.secure_url.replace(
-        '/upload/',
+        "/upload/",
         `/upload/fl_attachment:${encodedName}/`
         );
+        // const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
         fs.unlinkSync(req.file.path);
 
         const shortId = await shortenUrl(downloadableUrl);
@@ -47,7 +48,8 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             expiry: expiryDate
         });
         // const protocol = req.protocol === 'https' || process.env.NODE_ENV === 'production' ? 'https' : 'http';
-        const downloadLink = `${req.protocol}://${req.get("host")}/${shortId}`;
+        const protocol = req.get("host").includes("localhost") ? "http" : "https";
+        const downloadLink = `${protocol}://${req.get("host")}/${shortId}`;
 
         await sendMail({
             emailTo,

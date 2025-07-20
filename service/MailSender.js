@@ -29,7 +29,7 @@ const sendMail = async({ emailTo, emailFrom, link, fileName }) => {
         subject: "Your file is ready to download!",
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2>Your file is ready to download 📄</h2>
+                <h2>Your file is ready to download</h2>
                 <p><strong>File Name:</strong> ${fileName}</p>
                 <p>
                     <a href="${link}" 
@@ -41,14 +41,14 @@ const sendMail = async({ emailTo, emailFrom, link, fileName }) => {
                 <p>If the button doesn't work, click or copy this link:</p>
                 <p><a href="${link}" style="color: #3366cc;">${link}</a></p>
                 <br>
-                <p>⚠️ This file will expire soon. Download it before the expiry date.</p>
+                <p>This file will expire soon. Download it before the expiry date.</p>
             </div>
         `
     }, function(err, data) {
         if (err) {
-            console.log("❌ Email error: " + err);
+            console.log("Email error: " + err);
         } else {
-            console.log(`✅ Email sent successfully to: ${emailTo}`);
+            console.log(`Email sent successfully to: ${emailTo}`);
         }
     });
 }
