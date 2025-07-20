@@ -33,7 +33,7 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
         "/upload/",
         `/upload/fl_attachment:${encodedName}/`
         );
-        // const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
+        const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
         fs.unlinkSync(req.file.path);
 
         const shortId = await shortenUrl(downloadableUrl);
@@ -42,7 +42,7 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
 
         const createdFile = await File.create({
             shortId,
-            cloudinaryUrl:result.url,
+            cloudinaryUrl:secureDownloadableUrl,//result.url,
             fileName: req.file.originalname,
             size: req.file.size,
             expiry: expiryDate
