@@ -45,7 +45,7 @@
       const data = await res.json();
 
       if (res.ok) {
-        const link = `http://${location.host}/${data.createdFile.shortId}`;
+        const link = `${window.location.protocol}//${location.host}/${data.createdFile.shortId}`;
         document.getElementById('response').innerHTML = `
           <p><strong>Short URL:</strong> <a href="${link}" target="_blank">${link}</a></p>
           <p>Email sent to: ${formData.get("emailTo")}</p>
