@@ -22,18 +22,25 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             return res.status(400).json({error: 'Missing required fields (file, emailTo, expiry)'});
         }
 
+        // const result = await cloudinary.uploader.upload(req.file.path, {
+        //     resource_type : 'raw',
+        //     type: 'upload',
+        //     access_mode: 'public'
+        // });
         const result = await cloudinary.uploader.upload(req.file.path, {
-            resource_type : 'raw',
-            type: 'upload',
-            access_mode: 'public'
+            resource_type: "raw",
+            use_filename: true,
+            unique_filename: false,
+            access_mode: "public",
+            flags: "attachment", //auto sets fl_attachment
         });
         // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
         const encodedName = encodeURIComponent(req.file.originalname);
-        const downloadableUrl = result.secure_url.replace(
-        "/upload/",
-        `/upload/fl_attachment:${encodedName}/`
-        );
-        const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
+        const downloadableUrl = result.secure_url//.replace(
+        // "/upload/",
+        // `/upload/fl_attachment:${encodedName}/`
+        // );
+        // const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
         fs.unlinkSync(req.file.path);
 
         const shortId = await shortenUrl(downloadableUrl);
@@ -42,7 +49,7 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
 
         const createdFile = await File.create({
             shortId,
-            cloudinaryUrl:secureDownloadableUrl,//result.url,
+            cloudinaryUrl:downloadableUrl,//result.url,
             fileName: req.file.originalname,
             size: req.file.size,
             expiry: expiryDate
