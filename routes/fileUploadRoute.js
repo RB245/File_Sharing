@@ -32,11 +32,21 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             use_filename: true,
             unique_filename: false,
             access_mode: "public",
-            flags: "attachment", //auto sets fl_attachment
+            // flags: "attachment", //auto sets fl_attachment
         });
-        // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
+
         const encodedName = encodeURIComponent(req.file.originalname);
-        const downloadableUrl = result.secure_url//.replace(
+        // const secureUrl = result.secure_url.replace("http://", "https://");
+        // const downloadableUrl = secureUrl.replace(
+        // "/upload/",
+        // `/upload/fl_attachment:${encodedName}/`
+        // );
+        const downloadableUrl = result.secure_url.startsWith("https")
+            ? result.secure_url
+            : result.secure_url.replace("http://", "https://");
+        // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
+        // const encodedName = encodeURIComponent(req.file.originalname);
+        // const downloadableUrl = result.secure_url//.replace(
         // "/upload/",
         // `/upload/fl_attachment:${encodedName}/`
         // );
