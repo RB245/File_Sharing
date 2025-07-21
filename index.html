@@ -37,7 +37,7 @@
       const expiry = formData.get("expiry") + "D"; // Convert to "1D", "2D" etc.
       formData.set("expiry", expiry);
 
-      const res = await fetch('/upload', {
+      const res = await fetch('https://file-sharing-backend-fxoc.onrender.com/upload', {
         method: 'POST',
         body: formData
       });
@@ -45,7 +45,7 @@
       const data = await res.json();
 
       if (res.ok) {
-        const link = `${window.location.protocol}//${location.host}/${data.createdFile.shortId}`;
+        const link = `https://file-sharing-backend-fxoc.onrender.com/${data.createdFile.shortId}`;
         document.getElementById('response').innerHTML = `
           <p><strong>Short URL:</strong> <a href="${link}" target="_blank">${link}</a></p>
           <p>Email sent to: ${formData.get("emailTo")}</p>
