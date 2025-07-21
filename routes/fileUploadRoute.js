@@ -21,12 +21,6 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
         if(!req.file || !emailTo || !expiry){
             return res.status(400).json({error: 'Missing required fields (file, emailTo, expiry)'});
         }
-
-        // const result = await cloudinary.uploader.upload(req.file.path, {
-        //     resource_type : 'raw',
-        //     type: 'upload',
-        //     access_mode: 'public'
-        // });
         const result = await cloudinary.uploader.upload(req.file.path, {
             resource_type: "raw",
             use_filename: true,
