@@ -37,23 +37,33 @@
       const expiry = formData.get("expiry") + "D"; // Convert to "1D", "2D" etc.
       formData.set("expiry", expiry);
 
-      const res = await fetch('https://file-sharing-backend-fxoc.onrender.com/upload', {
-        method: 'POST',
-        body: formData
-      });
+      const backendBaseURL = location.hostname === 'localhost'
+      ? 'http://localhost:8081'
+      : 'https://file-sharing-backend-fxoc.onrender.com';
 
-      const data = await res.json();
+      try{
+        const res = await fetch(`${backendBaseURL}/upload`, {
+          method: 'POST',
+          body: formData
+        });
 
-      if (res.ok) {
-        const link = `https://file-sharing-backend-fxoc.onrender.com/${data.createdFile.shortId}`;
-        document.getElementById('response').innerHTML = `
-          <p><strong>Short URL:</strong> <a href="${link}" target="_blank">${link}</a></p>
-          <p>Email sent to: ${formData.get("emailTo")}</p>
-        `;
-      } else {
-        document.getElementById('response').innerText = "Upload failed: " + (data.error || 'Unknown error');
+        const data = await res.json();
+
+        if (res.ok) {
+          const link = `${backendBaseURL}/${data.createdFile.shortId}`;
+          document.getElementById('response').innerHTML = `
+            <p><strong>Short URL:</strong> <a href="${link}" target="_blank">${link}</a></p>
+            <p>Email sent to: ${formData.get("emailTo")}</p>
+          `;
+        } else {
+          document.getElementById('response').innerText = "Upload failed: " + (data.error || 'Unknown error');
+        }
       }
-    };
+      catch (err) {
+      document.getElementById('response').innerHTML = `
+        <p style="color: red;"><strong>Network error:</strong> ${err.message}</p>`;
+    }
+  };
   </script>
 </body>
 </html>

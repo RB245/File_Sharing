@@ -26,29 +26,16 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             use_filename: true,
             unique_filename: false,
             access_mode: "public",
-            // flags: "attachment", //auto sets fl_attachment
         });
 
         const encodedName = encodeURIComponent(req.file.originalname);
-        // const secureUrl = result.secure_url.replace("http://", "https://");
-        // const downloadableUrl = secureUrl.replace(
-        // "/upload/",
-        // `/upload/fl_attachment:${encodedName}/`
-        // );
         const downloadableUrl = result.secure_url.startsWith("https")
             ? result.secure_url
             : result.secure_url.replace("http://", "https://");
-        // // const downloadableUrl = result.secure_url.replace('/upload/', `upload/fl_attachment:${req.file.originalname}/`);
-        // const encodedName = encodeURIComponent(req.file.originalname);
-        // const downloadableUrl = result.secure_url//.replace(
-        // "/upload/",
-        // `/upload/fl_attachment:${encodedName}/`
-        // );
-        // const secureDownloadableUrl = downloadableUrl.replace("http://", "https://");
+
         fs.unlinkSync(req.file.path);
 
         const shortId = await shortenUrl(downloadableUrl);
-        // const shortId = await shortenUrl(result.url);
         const expiryDate = getExpiryDate(expiry);
 
         const createdFile = await File.create({
@@ -58,7 +45,6 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             size: req.file.size,
             expiry: expiryDate
         });
-        // const protocol = req.protocol === 'https' || process.env.NODE_ENV === 'production' ? 'https' : 'http';
         const protocol = req.get("host").includes("localhost") ? "http" : "https";
         const downloadLink = `${protocol}://${req.get("host")}/${shortId}`;
 
@@ -69,32 +55,7 @@ router.post("/upload", upload.single('file'), async(req,res)=>{
             fileName: req.file.originalname,
             size: req.file.size
         });
-        // console.log("Body:", req.body);
-        // console.log("File:", req.file);
-
-        // const {expiry}=req.body;
-        // if(!req.file) return res.status(400).json({error: 'No file uploaded'});
-        // const result= await cloudinary.uploader.upload(req.file.path,{
-        //     resource_type:'auto',
-        // });
-        // fs.unlinkSync(req.file.path);
-        // // console.log(result);
-        // const shortId = await shortenUrl(result.url);
-        // // const expiry = getExpiryDate();
-        // const createdFile = await File.create({
-        //     shortId,
-        //     cloudinaryUrl:result.url,
-        //     fileName: req.file.originalname,
-        //     size:req.file.size,
-        //     expiry: new Date()
-        // })
-
         res.json({createdFile});
-        // return res.json({
-        //     message: 'File uploaded successfully',
-        //     url: result.secure_url,
-        //     expiry
-        // });
     }
     catch(err){
         console.error(err);
